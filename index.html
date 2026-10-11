@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trade Talk</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#eef2f6; --text:#18212b; --muted:#5b6876;
+  --border:#d9e0e7; --accent:#1f5f8b; --accent-ink:#ffffff; --accent-soft:#e3eef6;
+  --ok:#2e7d4f; --ok-soft:#e2f2e8; --warn:#b5651d; --warn-soft:#fbeedd; --mark:#fff1b8; --danger:#c0392b;
+  --star:#e0a100; --heart:#d9465f;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.06),0 2px 8px rgba(16,24,40,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1419; --surface:#171f28; --surface-2:#1f2a35; --text:#e6edf3; --muted:#9aa8b6;
+    --border:#2b3845; --accent:#5aa9df; --accent-ink:#0b1620; --accent-soft:#1b3346;
+    --ok:#5cc58a; --ok-soft:#173a27; --warn:#e8a25a; --warn-soft:#3a2a17; --mark:#5a4a12; --danger:#ef6f60;
+    --star:#f2c14e; --heart:#f07a8e; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1419; --surface:#171f28; --surface-2:#1f2a35; --text:#e6edf3; --muted:#9aa8b6;
+  --border:#2b3845; --accent:#5aa9df; --accent-ink:#0b1620; --accent-soft:#1b3346;
+  --ok:#5cc58a; --ok-soft:#173a27; --warn:#e8a25a; --warn-soft:#3a2a17; --mark:#5a4a12; --danger:#ef6f60;
+  --star:#f2c14e; --heart:#f07a8e; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Segoe UI",sans-serif;line-height:1.6;font-size:16px}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:5px 11px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.hbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap;box-shadow:var(--shadow)}
+.hbtn:hover{border-color:var(--accent)}
+.hbtn.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.top{flex-wrap:wrap}
+nav.tabs{display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs a{text-align:center;padding:10px 4px;text-decoration:none;color:var(--muted);font-weight:600;font-size:15px;border-bottom:2px solid transparent}
+nav.tabs a.on{color:var(--accent);border-color:var(--accent)}
+main{padding:24px 0 64px}
+h1{font-size:24px;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:19px;margin:28px 0 12px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:12px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:720px){.g3,.g2{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)}}
+.stat b{display:block;font-size:26px;line-height:1.2}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15px;text-decoration:none}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.rec{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn.sm{padding:4px 10px;font-size:13px;border-radius:8px}
+.btn.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.tag{font-size:12px;font-weight:700;color:var(--muted);background:var(--surface-2);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.level-card{cursor:pointer;transition:border-color .15s}
+.level-card.on{border-color:var(--accent);outline:2px solid var(--accent-soft)}
+.level-card ul{margin:8px 0 0;padding-left:18px;font-size:14px}
+.sc-card{cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.sc-card:hover{border-color:var(--accent)}
+.stars{display:inline-flex;gap:0}
+.stars button{border:0;background:none;padding:0 1px;cursor:pointer;font-size:17px;line-height:1;color:var(--border)}
+.stars button.on{color:var(--star)}
+.stars.ro{font-size:14px;color:var(--star);letter-spacing:1px}
+.fav{border:0;background:none;cursor:pointer;font-size:18px;line-height:1;padding:0 2px;color:var(--border)}
+.fav.on{color:var(--heart)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.filters{display:flex;flex-direction:column;gap:10px}
+.filters .lbl{font-size:13px;font-weight:700;color:var(--muted);min-width:56px}
+.stage-head{display:flex;align-items:center;gap:8px;margin:24px 0 10px;font-weight:800}
+.stage-head:first-child{margin-top:0}
+.prompt{background:var(--surface-2);border-radius:10px;padding:14px 16px;font-size:17px}
+.exp{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--border)}
+.exp:first-child{border-top:0}
+.exp .en{font-weight:600}
+.play{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:grid;place-items:center;color:var(--accent)}
+.play:hover{border-color:var(--accent)}
+.play svg{width:14px;height:14px}
+.sent{display:flex;gap:10px;align-items:flex-start;padding:7px 8px;border-radius:8px}
+.sent.now{background:var(--accent-soft)}
+.sent p{margin:0;font-size:17px}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 2px}
+.mine{text-decoration:underline dotted var(--accent);text-underline-offset:3px;text-decoration-thickness:2px}
+.tip{background:var(--warn-soft);border-radius:10px;padding:12px 14px;font-size:14px}
+.tip b{color:var(--warn)}
+.lvtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lvtabs button{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:4px 12px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
+.lvtabs button.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.bar{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s linear}
+.bar.over i{background:var(--ok)}
+.timer{font-variant-numeric:tabular-nums;font-size:28px;font-weight:800}
+.transcript{min-height:60px;background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:15px}
+.checks label{display:flex;gap:8px;align-items:center;padding:4px 0;cursor:pointer}
+.hit{color:var(--ok);font-weight:700}
+.miss{color:var(--muted)}
+.flash{min-height:220px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;gap:10px;font-size:20px}
+.flash .en{font-size:22px;font-weight:700}
+.back-link{background:none;border:0;color:var(--accent);cursor:pointer;padding:0;font-weight:600;margin-bottom:12px}
+.hidden{display:none!important}
+.note{font-size:14px;color:var(--muted);background:var(--surface-2);border-radius:10px;padding:10px 12px}
+select{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:6px 10px;max-width:100%}
+.field{display:flex;flex-direction:column;gap:4px}
+.field span{font-size:13px;font-weight:700}
+.field small{font-size:12px;color:var(--muted)}
+.field input{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:8px 10px;width:100%}
+.field input:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.meter{height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;background:var(--accent)}
+.rec-list{display:flex;flex-direction:column;gap:8px}
+.rec-item{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border)}
+.rec-item:first-child{border-top:0}
+.empty{text-align:center;padding:28px 12px}
+textarea{width:100%;border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px;line-height:1.6;resize:vertical;color:inherit}
+textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.btn.danger{color:var(--danger)}
+.btn.danger:hover{border-color:var(--danger)}
+.subtabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin:16px 0 18px}
+.subtabs a{padding:8px 14px;text-decoration:none;color:var(--muted);font-weight:600;font-size:15px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.subtabs a.on{color:var(--accent);border-color:var(--accent)}
+.linkrow{text-decoration:none;color:inherit}
+.linkrow:hover b{color:var(--accent)}
+.clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
+.err{color:var(--danger);text-decoration:underline wavy var(--danger);text-underline-offset:3px;font-weight:600}
+.err sup{font-size:10px;margin-left:1px}
+.errc{color:var(--danger)}
+.pill.errpill{background:var(--warn-soft);color:var(--danger)}
+.fixes{margin:12px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
+.fixes s{color:var(--danger)}
+.fix{color:var(--ok)}
+.okbox{background:var(--ok-soft)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal-w{font-size:12px;font-weight:700;color:var(--muted)}
+.cal-d{border-radius:8px;padding:8px 0;font-size:14px;background:var(--surface-2)}
+.cal-d.l1{background:color-mix(in srgb,var(--accent) 25%,var(--surface))}
+.cal-d.l2{background:color-mix(in srgb,var(--accent) 55%,var(--surface));color:var(--accent-ink)}
+.cal-d.l3{background:var(--accent);color:var(--accent-ink)}
+.cal-d.today{outline:2px solid var(--accent);outline-offset:1px}
+.cal-d.lg{display:inline-block;width:16px;height:16px;padding:0}
+.barrow{display:grid;grid-template-columns:110px 1fr 48px;gap:10px;align-items:center;font-size:14px;margin-top:8px}
+.barrow .meter{margin-top:0}
+.chip.sm{padding:2px 10px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">Trade <span>Talk</span></div>
+      <div class="row" style="gap:14px">
+        <div class="row" style="gap:6px;flex-wrap:nowrap"><span class="muted small">단계</span><div class="seg" id="levelSeg" aria-label="학습 단계"></div></div>
+        <div class="row" style="gap:8px;flex-wrap:nowrap">
+          <a class="hbtn" href="#note" data-tab="note">내 노트</a>
+          <a class="hbtn" href="#my" data-tab="my">마이페이지</a>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <a href="#home" data-tab="home">홈</a>
+      <a href="#study" data-tab="study">상황 학습</a>
+      <a href="#roleplay" data-tab="roleplay">롤플레이</a>
+      <a href="#cards" data-tab="cards">표현 카드</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+
+<script src="data/scenarios-1.js"></script>
+<script src="data/scenarios-2.js"></script>
+<script src="app/mypage.js"></script>
+<script>
+/* ---------- 기본 데이터 ---------- */
+// 기본 상황 + 사용자가 만든 '나만의 상황' (rebuildScenarios에서 합침)
+const BASE_SCENARIOS = window.SCENARIOS || [];
+let SCENARIOS = BASE_SCENARIOS;
+
+const STAGES = [
+  ['start','거래 시작'], ['quote','문의·견적'], ['order','계약·주문'],
+  ['ship','생산·선적'], ['pay','결제'], ['after','사후 관리'], ['common','공통'], ['mine','나만의 상황']
+];
+const stageName = k => (STAGES.find(s=>s[0]===k)||[,''])[1];
+const IMP_NAME = {3:'필수', 2:'자주', 1:'가끔'};
+
+const LEVELS = {
+  1: { name:'입문', target:20,
+    desc:'핵심 패턴 문장을 그대로 따라 말해보는 단계',
+    goals:['짧은 문장 3~4개로 말하기','핵심 표현을 그대로 써보기','답변 20초 내외'] },
+  2: { name:'기초', target:40,
+    desc:'짧고 정확한 문장으로 필요한 정보를 빠짐없이 전달하는 단계',
+    goals:['기본 정보(누가·무엇을·언제·얼마)를 빠짐없이','문장을 끝까지 완성하기','답변 30~45초 유지'] },
+  3: { name:'중급', target:60,
+    desc:'문장을 연결해 하나의 단락으로 말하고, 이유와 수치를 덧붙이는 단계',
+    goals:['접속사로 문장 연결 (and, so, because, however)','구체적인 숫자·예시 넣기','제안이나 질문으로 마무리, 1분 내외'] },
+  4: { name:'중상급', target:90,
+    desc:'상대의 입장을 고려해 뉘앙스 있게 협상·설득하는 단계',
+    goals:['상대 입장을 먼저 인정하고 완곡하게 말하기','담화 표지 활용 (That said, In terms of…)','근거와 함께 대안 제시, 1분 30초 내외'] },
+  5: { name:'고급', target:120,
+    desc:'상대의 목표를 읽고 구조적으로 설득하는 비즈니스 리더 수준',
+    goals:['상대의 우선순위를 먼저 짚기','첫째·둘째처럼 구조를 갖춰 말하기','다음 단계까지 구체적으로 제안, 2분 내외'] }
+};
+const lvLabel = l => `${l}단계 · ${LEVELS[l].name}`;
+
+const SELF_CHECK = {
+  1:['핵심 표현을 그대로 사용했다','또박또박 끝까지 말했다','20초 동안 멈추지 않았다'],
+  2:['필요한 정보를 빠짐없이 말했다','문장을 끝까지 완성했다','30초 이상 말을 이어갔다'],
+  3:['문장을 접속사로 연결했다','구체적인 숫자나 예시를 넣었다','제안이나 질문으로 마무리했다'],
+  4:['상대의 입장을 먼저 인정했다','완곡하고 정중한 표현을 썼다','근거를 들어 대안을 제시했다'],
+  5:['상대의 상황과 목표를 먼저 언급했다','구조(첫째·둘째 등)를 갖춰 말했다','다음 단계를 구체적으로 제안했다']
+};
+
+/* ---------- 내 회사 정보 (맞춤 예문) ---------- */
+const PROFILE_DEFAULT = { name:'Minji Park', company:'Hana Trading', products:'kitchenware', item:'frying pan', feature:'lightweight and easy to clean' };
+const PROFILE_FIELDS = [
+  ['name',     '내 이름 (영문)',          'Minji Park', '예문 속 내 이름이에요.'],
+  ['company',  '회사 이름 (영문)',         'Hana Trading', ''],
+  ['products', '수출 품목 (영어, 범주)',    'skincare products', '“We make ___.” 빈칸에 들어갈 말'],
+  ['item',     '대표 제품 (영어, 단수)',    'vitamin C serum', '“our ___” 빈칸에 들어갈 말'],
+  ['feature',  '제품의 강점 (영어)',        'gentle on sensitive skin', '“It’s ___.” 빈칸에 들어갈 말']
+];
+const PRESETS = [
+  { label:'화장품',     products:'skincare products', item:'vitamin C serum', feature:'gentle on sensitive skin' },
+  { label:'자동차 부품', products:'auto parts',        item:'brake pad',       feature:'long-lasting and quiet' },
+  { label:'LED 조명',   products:'LED lighting',      item:'LED panel light', feature:'energy-efficient and easy to install' },
+  { label:'식품',       products:'Korean snacks',     item:'seaweed snack',   feature:'healthy and low in calories' },
+  { label:'주방용품',    products:'kitchenware',       item:'frying pan',      feature:'lightweight and easy to clean' }
+];
+function prof(){
+  const p = Object.assign({}, PROFILE_DEFAULT);
+  Object.entries(S.profile||{}).forEach(([k,v])=>{ if(v && String(v).trim()) p[k]=String(v).trim(); });
+  p.first = p.name.split(/\s+/)[0];
+  return p;
+}
+const PH = /\{(name|first|company|products|item|feature)\}/g;
+const fill = t => { const p=prof(); return t.replace(PH,(m,k)=>p[k]); };
+
+/* ---------- 상태 ---------- */
+const KEY = 'tradeTalk.v1';
+function defState(){
+  return { level:'3', rate:1, done:{1:[],2:[],3:[],4:[],5:[]}, cards:{}, days:[],
+    profile:null, imp:{}, fav:{}, retry:{}, voice:null,
+    log:{}, myExp:[], custom:[],
+    f:{ imp:0, stage:'all', status:'all', fav:false, sort:'rec' } };
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if(s){
+      // 예전 IM/IH/AL 기록을 2/3/4단계로 옮김
+      const OLD = {IM:'2', IH:'3', AL:'4'}, base = defState();
+      if(OLD[s.level]) s.level = OLD[s.level];
+      if(!LEVELS[s.level]) s.level = base.level;
+      const done = base.done;
+      Object.entries(s.done||{}).forEach(([k,v])=>{ const nk = OLD[k]||k; if(done[nk]) done[nk] = [...new Set([...done[nk], ...v])]; });
+      s.done = done;
+      s.f = Object.assign(base.f, s.f||{});
+      return Object.assign(base, s);
+    }
+  }catch(e){}
+  return defState();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let S = load();
+
+function dayKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+// 학습한 날과 그날 한 일을 기록. 달력 색은 행동별 점수의 합으로 정함
+// (말하기 연습에 더 큰 점수를 줘서, 카드만 넘긴 날이 더 많이 공부한 날처럼 보이지 않게)
+const PTS = { rec:3, save:2, done:2, card:0.2 };
+const PTS_NAME = { rec:['롤플레이 녹음','회'], save:['답변 저장','개'], done:['상황 완료','개'], card:['표현 카드','장'] };
+function touchDay(kind){
+  const t = dayKey(new Date());
+  if(!S.days.includes(t)){ S.days.push(t); S.days = S.days.slice(-400); }
+  S.log = S.log || {};
+  let d = S.log[t];
+  // 예전 기록(횟수만 저장된 숫자)은 legacy로 보존
+  if(!d || typeof d!=='object') d = S.log[t] = { legacy: typeof d==='number' ? d : 0 };
+  if(kind) d[kind] = (d[kind]||0) + 1;
+  save();
+}
+function dayPoints(k){
+  const d = (S.log||{})[k];
+  if(d==null) return S.days.includes(k) ? 1 : 0;
+  if(typeof d==='number') return d;
+  return Math.round(((d.legacy||0) + Object.keys(PTS).reduce((n,x)=>n+(d[x]||0)*PTS[x], 0))*10)/10;
+}
+function streak(){
+  const set=new Set(S.days); let n=0; const d=new Date();
+  if(!set.has(dayKey(d))) d.setDate(d.getDate()-1);
+  while(set.has(dayKey(d))){ n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+const isDone = (id, lv=S.level) => S.done[lv].includes(id);
+function markDone(id){
+  const fresh = !isDone(id) || !!S.retry[id];   // 이미 완료한 상황을 다시 눌러도 점수는 한 번만
+  if(!isDone(id)) S.done[S.level].push(id);
+  delete S.retry[id];
+  if(fresh) touchDay('done'); else save();
+}
+const imp = s => S.imp[s.id] || s.imp;
+const byId = id => SCENARIOS.find(s=>s.id===id);
+const flowIdx = s => SCENARIOS.indexOf(s);
+// 할 일이 남은 상황: 현재 단계에서 안 했거나, '다시 연습'으로 표시한 상황
+const pending = s => !isDone(s.id) || !!S.retry[s.id];
+
+/* ---------- 정렬·필터 ---------- */
+function recSorted(list){
+  return [...list].sort((a,b)=>
+    (pending(b)-pending(a)) || (!!S.retry[b.id] - !!S.retry[a.id]) || (imp(b)-imp(a)) || (flowIdx(a)-flowIdx(b)));
+}
+function nextScenario(exclude){
+  return recSorted(SCENARIOS).find(s=>pending(s) && s.id!==exclude)
+      || SCENARIOS.find(s=>s.id!==exclude) || SCENARIOS[0];
+}
+function filtered(){
+  const f = S.f;
+  const list = SCENARIOS.filter(s=>{
+    if(f.imp && imp(s) < f.imp) return false;
+    if(f.stage!=='all' && s.stage!==f.stage) return false;
+    if(f.status==='todo' && isDone(s.id)) return false;
+    if(f.status==='done' && !isDone(s.id)) return false;
+    if(f.status==='retry' && !S.retry[s.id]) return false;
+    if(f.fav && !S.fav[s.id]) return false;
+    return true;
+  });
+  return f.sort==='rec' ? recSorted(list) : list;
+}
+
+/* ---------- 유틸 ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&');
+// 문장 나누기 (Mr. 같은 약어 뒤에서는 나누지 않음)
+const splitSent = t => t.split(/(?<!\bMr\.)(?<=[.!?])\s+(?=[A-Z{])/);
+const PLAY_ICON = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>';
+function markKeys(html, exps){
+  // 본문이 이미 escape된 상태라 키워드도 같은 방식으로 escape (haven't → haven&#39;t)
+  const ks = exps.map(e=>esc(e[2])).filter(Boolean).sort((a,b)=>b.length-a.length).map(reEsc);
+  if(!ks.length) return html;
+  return html.replace(new RegExp('('+ks.join('|')+')','gi'),'<mark>$1</mark>');
+}
+// 일반 텍스트(받아쓰기 등)에 핵심 표현 표시
+const highlight = (text, exps) => markKeys(esc(text), exps);
+// 템플릿 답변: 핵심 표현 표시 + 내 정보 자리에 밑줄
+function tplHTML(t, exps){
+  const p = prof();
+  return markKeys(esc(t), exps).replace(PH,(m,k)=>`<span class="mine">${esc(p[k])}</span>`);
+}
+function starsHTML(s, editable=true){
+  const n = imp(s);
+  if(!editable) return `<span class="stars ro" title="중요도: ${IMP_NAME[n]}">${'★'.repeat(n)}${'☆'.repeat(3-n)}</span>`;
+  return `<span class="stars" title="중요도 (눌러서 변경)">${[1,2,3].map(i=>
+    `<button data-star="${s.id}" data-n="${i}" class="${i<=n?'on':''}" aria-label="중요도 ${i}">★</button>`).join('')}</span>`;
+}
+const favHTML = s => `<button class="fav ${S.fav[s.id]?'on':''}" data-fav="${s.id}" aria-label="즐겨찾기" title="즐겨찾기">${S.fav[s.id]?'♥':'♡'}</button>`;
+
+/* ---------- 음성(TTS) ---------- */
+// Mac에 기본으로 들어 있는 효과음·장난용 음성과 오래된 기계음 음성은 제외
+const NOVELTY = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Pipe Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Deranged|Hysterical|Fred|Junior|Kathy|Ralph)\b/i;
+const ROBOTIC = /^(Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
+function voiceScore(v){
+  let s = /en-US/i.test(v.lang) ? 20 : /en-GB/i.test(v.lang) ? 12 : 5;
+  if(/premium|enhanced|neural|natural|online|프리미엄|고품질/i.test(v.name)) s += 60;
+  if(/Google US English/i.test(v.name)) s += 50;
+  if(/Google UK English/i.test(v.name)) s += 35;
+  if(/\b(Ava|Zoe|Evan|Nathan|Allison|Susan|Tom|Aria|Jenny|Guy|Emma|Andrew|Brian|Noelle|Joelle)\b/i.test(v.name)) s += 30;
+  if(/\b(Samantha|Daniel|Karen|Moira|Tessa)\b/i.test(v.name)) s += 10;
+  if(ROBOTIC.test(v.name)) s -= 30;
+  return s;
+}
+function usableVoices(){
+  if(!('speechSynthesis' in window)) return [];
+  return speechSynthesis.getVoices()
+    .filter(v=>/^en/i.test(v.lang) && !NOVELTY.test(v.name))
+    .sort((a,b)=>voiceScore(b)-voiceScore(a));
+}
+let voice = null;
+function pickVoice(){ const vs = usableVoices(); voice = vs.find(v=>v.name===S.voice) || vs[0] || null; }
+// 자연스러운 음성(프리미엄·뉴럴·구글 온라인)이 하나도 없으면 설치 안내를 보여줌
+const hasGoodVoice = () => usableVoices().some(v=>voiceScore(v) >= 50);
+function voiceOptions(){
+  const vs = usableVoices();
+  if(!vs.length) return '<option>사용 가능한 영어 음성이 없어요</option>';
+  return vs.map((v,i)=>`<option value="${esc(v.name)}" ${voice && v.name===voice.name?'selected':''}>${esc(v.name)} (${esc(v.lang)})${i===0?' · 추천':''}</option>`).join('');
+}
+const SAMPLE_LINE = "Thank you for your interest in our products. I'd be happy to send you our catalog.";
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = ()=>{
+    pickVoice();
+    document.querySelectorAll('select[data-act="voice"]').forEach(sel=>{ sel.innerHTML = voiceOptions(); });
+    const g = document.getElementById('voiceGuide'); if(g) g.classList.toggle('hidden', hasGoodVoice());
+  };
+}
+function speak(text, onend){
+  if(!('speechSynthesis' in window)){ alert('이 브라우저는 음성 재생을 지원하지 않아요.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; if(voice) u.voice=voice; u.rate=S.rate||1;
+  if(onend) u.onend=onend;
+  speechSynthesis.speak(u);
+}
+let playToken = 0;
+function playSentences(list, shadow){
+  const token = ++playToken;
+  const els = document.querySelectorAll('.sent');
+  const step = i => {
+    els.forEach(e=>e.classList.remove('now'));
+    if(token!==playToken || i>=list.length) return;
+    els[i] && els[i].classList.add('now');
+    speak(list[i], ()=>{
+      if(token!==playToken) return;
+      const pause = shadow ? list[i].split(' ').length*420+900 : 150;
+      setTimeout(()=>step(i+1), pause);
+    });
+  };
+  step(0);
+}
+function stopSpeak(){ playToken++; if('speechSynthesis' in window) speechSynthesis.cancel(); document.querySelectorAll('.sent').forEach(e=>e.classList.remove('now')); }
+
+/* ---------- 화면 전환 ---------- */
+function renderLevelSeg(){
+  $('#levelSeg').innerHTML = Object.keys(LEVELS).map(l=>`<button data-level="${l}" title="${lvLabel(l)}" class="${S.level===l?'on':''}">${l}</button>`).join('');
+}
+function setLevel(l){ S.level=l; save(); renderLevelSeg(); refresh(); }
+
+const view = { tab:'home', study:null, studyLv:null, editProfile:false };
+function renderMain(){
+  const h = (location.hash||'#home').slice(1).split('/');
+  view.tab = ['home','study','roleplay','cards','note','my'].includes(h[0]) ? h[0] : 'home';
+  document.querySelectorAll('header [data-tab]').forEach(a=>a.classList.toggle('on', a.dataset.tab===view.tab));
+  const m = $('#main');
+  if(view.tab==='home') m.innerHTML = homeView();
+  if(view.tab==='study'){
+    const id = h[1] && byId(h[1]) ? h[1] : null;
+    if(id!==view.study) view.studyLv = S.level;
+    view.study = id;
+    m.innerHTML = id ? studyDetail() : studyList();
+  }
+  if(view.tab==='roleplay'){ rp.id = h[1] && byId(h[1]) ? h[1] : (rp.id||nextScenario().id); m.innerHTML = roleplayView(); }
+  if(view.tab==='cards') m.innerHTML = cardsView();
+  if(view.tab==='note') m.innerHTML = noteView(h);
+  if(view.tab==='my') m.innerHTML = myView(h);
+}
+function route(){ stopSpeak(); stopRec(true); view.studyLv = S.level; renderMain(); window.scrollTo(0,0); }
+// 스크롤 위치를 유지한 채 다시 그리기 (녹음 중이면 롤플레이 화면은 건드리지 않음)
+function refresh(){ if(view.tab==='roleplay' && rec.on) return; const y=window.scrollY; stopSpeak(); renderMain(); window.scrollTo(0,y); }
+
+/* ---------- 홈 ---------- */
+function profileCard(){
+  const p = prof(), editing = view.editProfile || !S.profile;
+  if(!editing){
+    return `
+    <div class="card">
+      <div class="row between">
+        <div><span class="pill">내 맞춤 예문</span>
+          <h3 style="margin-top:6px">${esc(p.company)} · ${esc(p.products)}</h3>
+          <p class="muted small" style="margin:0">${esc(p.name)} · 대표 제품 ${esc(p.item)} · “It’s ${esc(p.feature)}.”</p>
+        </div>
+        <button class="btn sm" data-act="editProfile">수정</button>
+      </div>
+    </div>`;
+  }
+  const cur = Object.assign({}, S.profile||{});
+  return `
+  <div class="card">
+    <h3>${S.profile?'내 회사 정보 수정':'먼저, 내 회사 정보를 알려주세요'}</h3>
+    <p class="muted small">입력한 정보가 모든 모범 답변에 들어가서 <b>내 업무에 맞는 예문</b>으로 바뀌어요. 영어로 입력해 주세요. 비워 두면 기본 예시(주방용품 회사)가 쓰여요.</p>
+    <div class="row" style="margin-bottom:12px"><span class="muted small">빠른 예시:</span>
+      ${PRESETS.map((x,i)=>`<button class="chip" data-preset="${i}">${x.label}</button>`).join('')}
+    </div>
+    <div class="grid g2" id="profileForm">
+      ${PROFILE_FIELDS.map(([k,label,ph,hint])=>`
+        <label class="field"><span>${label}</span>
+          <input data-pf="${k}" value="${esc(cur[k]||'')}" placeholder="${esc(ph)}" autocomplete="off" spellcheck="false">
+          ${hint?`<small>${hint}</small>`:''}
+        </label>`).join('')}
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" data-act="saveProfile">저장하고 예문 만들기</button>
+      ${S.profile?'<button class="btn" data-act="cancelProfile">취소</button>':'<button class="btn" data-act="skipProfile">기본 예시로 시작</button>'}
+    </div>
+  </div>`;
+}
+function voiceCard(){
+  return `
+  <div class="card">
+    <div class="row between">
+      <div><span class="pill">음성 설정</span>
+        <p class="muted small" style="margin:6px 0 0">영어 음성은 이 컴퓨터에 설치된 목소리를 써요. 들어보고 가장 자연스러운 목소리를 고르세요.</p></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <select data-act="voice" aria-label="목소리">${voiceOptions()}</select>
+      <button class="btn sm" data-act="voiceTest">▶ 들어보기</button>
+    </div>
+    <details id="voiceGuide" class="note ${hasGoodVoice()?'hidden':''}" style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:700">목소리가 딱딱하게 들리나요? 자연스러운 목소리 설치하기</summary>
+      <ol style="margin:8px 0 0;padding-left:20px">
+        <li><b>Mac</b>: 시스템 설정 → 손쉬운 사용 → 읽기 및 말하기 → 시스템 음성 옆 <b>ⓘ</b> → 영어(미국)에서 <b>Ava(프리미엄)</b>이나 <b>Zoe(프리미엄)</b> 다운로드 → 브라우저를 다시 열기</li>
+        <li><b>Windows</b>: Microsoft Edge로 열면 <b>Microsoft Ava/Jenny Online (Natural)</b> 같은 자연스러운 음성을 바로 쓸 수 있어요.</li>
+        <li><b>Chrome</b>에서는 인터넷에 연결되어 있으면 <b>Google US English</b> 음성도 쓸 수 있어요.</li>
+      </ol>
+    </details>
+  </div>`;
+}
+function homeView(){
+  const doneN = S.done[S.level].length;
+  const must = SCENARIOS.filter(s=>imp(s)===3), mustDone = must.filter(s=>isDone(s.id)).length;
+  const allExp = SCENARIOS.reduce((n,s)=>n+s.exp.length,0);
+  const known = Object.values(S.cards).filter(v=>v==='known').length;
+  const recs = recSorted(SCENARIOS).filter(pending).slice(0,3);
+  const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+  return `
+  <h1>무역 실무 영어 회화</h1>
+  <p class="muted">바이어 첫 연락부터 대금 회수, 클레임 대응까지 ${SCENARIOS.length}개 실무 상황으로 말하기를 연습해요. 현재 단계: <b>${lvLabel(S.level)}</b></p>
+  <div style="margin-top:16px">${profileCard()}</div>
+  <div style="margin-top:12px">${voiceCard()}</div>
+
+  <div class="grid g4" style="margin-top:12px">
+    <div class="card stat"><span class="muted small">★★★ 필수 상황</span><b>${mustDone} / ${must.length}</b><div class="meter"><i style="width:${pct(mustDone,must.length)}%"></i></div></div>
+    <div class="card stat"><span class="muted small">${S.level}단계 전체 완료</span><b>${doneN} / ${SCENARIOS.length}</b><div class="meter"><i style="width:${pct(doneN,SCENARIOS.length)}%"></i></div></div>
+    <div class="card stat"><span class="muted small">외운 표현</span><b>${known} / ${allExp}</b><div class="meter"><i style="width:${pct(known,allExp)}%"></i></div></div>
+    <div class="card stat"><span class="muted small">연속 학습</span><b>${streak()}일</b></div>
+  </div>
+
+  <h2>오늘의 추천</h2>
+  <p class="muted small" style="margin-top:-6px">중요도가 높고 아직 안 한 상황, ‘다시 연습’으로 표시한 상황을 먼저 보여드려요.</p>
+  ${recs.length ? `<div class="grid g3">${recs.map(s=>`
+    <div class="card sc-card" data-open="${s.id}">
+      <div class="row between"><span class="tag">${stageName(s.stage)}</span>${starsHTML(s,false)}</div>
+      <h3 style="margin-top:4px">${esc(s.title)}</h3>
+      <p class="muted small" style="margin:0">${esc(s.sit)}</p>
+      <div class="row" style="margin-top:10px">
+        ${S.retry[s.id]?'<span class="pill warn">다시 연습</span>':''}
+        <a class="btn sm" href="#study/${s.id}">학습</a><a class="btn sm primary" href="#roleplay/${s.id}">말해보기</a>
+      </div>
+    </div>`).join('')}</div>`
+  : `<div class="card empty"><p style="margin:0">${S.level}단계의 모든 상황을 완료했어요! 위에서 다음 단계로 올려 보세요.</p></div>`}
+
+  <h2>학습 단계 선택</h2>
+  <div class="grid g3">
+    ${Object.entries(LEVELS).map(([k,v])=>`
+      <div class="card level-card ${S.level===k?'on':''}" data-level="${k}">
+        <div class="row between"><h3>${k}단계</h3><span class="pill">${v.name}</span></div>
+        <p class="small" style="margin:0">${v.desc}</p>
+        <ul>${v.goals.map(g=>`<li>${g}</li>`).join('')}</ul>
+        <p class="muted small" style="margin:8px 0 0">완료 ${S.done[k].length} / ${SCENARIOS.length}</p>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ---------- 상황 학습: 목록 ---------- */
+function chip(group, val, label){ const on = String(S.f[group])===String(val); return `<button class="chip ${on?'on':''}" data-filter="${group}" data-val="${val}">${label}</button>`; }
+function scCard(s){
+  return `
+  <div class="card sc-card" data-open="${s.id}">
+    <div class="row between">
+      <span class="tag">${stageName(s.stage)}</span>
+      <div class="row" style="gap:6px">${starsHTML(s)}${favHTML(s)}</div>
+    </div>
+    <h3 style="margin-top:2px">${esc(s.title)}</h3>
+    <span class="muted small">${esc(s.en)}</span>
+    <p class="small" style="margin:4px 0 0">${esc(s.sit)}</p>
+    ${(isDone(s.id)||S.retry[s.id]) ? `<div class="row" style="margin-top:6px">
+      ${isDone(s.id)?`<span class="pill ok">✓ ${S.level}단계 완료</span>`:''}${S.retry[s.id]?'<span class="pill warn">다시 연습</span>':''}</div>` : ''}
+  </div>`;
+}
+function studyList(){
+  const f = S.f, list = filtered();
+  const dirty = f.imp || f.stage!=='all' || f.status!=='all' || f.fav;
+  let body;
+  if(!list.length) body = `<div class="card empty"><p>조건에 맞는 상황이 없어요.</p><button class="btn sm" data-act="resetFilter">필터 초기화</button></div>`;
+  else if(f.sort==='flow'){
+    body = STAGES.map(([k,n])=>{
+      const items = list.filter(s=>s.stage===k);
+      return items.length ? `<div class="stage-head">${n} <span class="muted small">${items.length}</span></div><div class="grid g2">${items.map(scCard).join('')}</div>` : '';
+    }).join('');
+  } else body = `<div class="grid g2">${list.map(scCard).join('')}</div>`;
+  return `
+  <h1>상황 학습</h1>
+  <p class="muted">별(★)을 눌러 나에게 맞게 중요도를 바꿀 수 있어요. ♡는 즐겨찾기예요.</p>
+  <div class="card filters" style="margin:16px 0">
+    <div class="row"><span class="lbl">중요도</span><div class="chips">
+      ${chip('imp',0,'전체')}${chip('imp',3,'★★★ 필수만')}${chip('imp',2,'★★ 이상')}</div></div>
+    <div class="row"><span class="lbl">진행</span><div class="chips">
+      ${chip('status','all','전체')}${chip('status','todo','안 한 것')}${chip('status','done','완료')}${chip('status','retry','다시 연습')}
+      <button class="chip ${f.fav?'on':''}" data-filter="fav" data-val="${!f.fav}">♥ 즐겨찾기</button></div></div>
+    <div class="row"><span class="lbl">거래 단계</span>
+      <select data-act="stage"><option value="all">전체</option>${STAGES.map(([k,n])=>`<option value="${k}" ${f.stage===k?'selected':''}>${n}</option>`).join('')}</select>
+    </div>
+    <div class="row between">
+      <div class="row"><span class="lbl">정렬</span><div class="chips">${chip('sort','rec','추천순')}${chip('sort','flow','거래 흐름순')}</div></div>
+      <div class="row"><span class="muted small">${list.length}개 상황</span>${dirty?'<button class="btn sm" data-act="resetFilter">초기화</button>':''}</div>
+    </div>
+  </div>
+  ${body}`;
+}
+
+/* ---------- 상황 학습: 상세 ---------- */
+function studyDetail(){
+  const s = byId(view.study), lv = view.studyLv, idx = Number(lv)-1;
+  const sents = splitSent(s.a[idx]);
+  return `
+  <button class="back-link" data-go="#study">← 상황 목록</button>
+  <div class="row between">
+    <div class="row"><span class="tag">${stageName(s.stage)}</span>${starsHTML(s)}${favHTML(s)}</div>
+    <div class="row">${isDone(s.id)?`<span class="pill ok">✓ ${S.level}단계 완료</span>`:''}${S.retry[s.id]?'<span class="pill warn">다시 연습</span>':''}</div>
+  </div>
+  <h1 style="margin-top:8px">${esc(s.title)}</h1>
+  <p class="muted">${esc(s.sit)}</p>
+
+  <h2>질문</h2>
+  <div class="prompt row" style="flex-wrap:nowrap;align-items:flex-start">
+    <button class="play" data-say="${esc(fill(s.q))}" aria-label="질문 듣기">${PLAY_ICON}</button>
+    <div>${esc(fill(s.q))}</div>
+  </div>
+
+  ${s.exp.length ? `<h2>핵심 표현</h2>
+  <div class="card">
+    ${s.exp.map((e,i)=>{ const saved = (S.myExp||[]).some(x=>x.id===`s-${s.id}-${i}`);
+      return `<div class="exp"><button class="play" data-say="${esc(e[0].replace(/~/g,''))}" aria-label="듣기">${PLAY_ICON}</button><div style="flex:1"><div class="en">${esc(e[0])}</div><div class="muted small">${esc(e[1])}</div></div>
+      ${s.custom?'':`<button class="chip sm ${saved?'on':''}" data-saveexp="1" data-sid="${s.id}" data-i="${i}" title="내 표현장에 담기">${saved?'✓ 담김':'＋ 담기'}</button>`}</div>`; }).join('')}
+  </div>` : ''}
+
+  <h2>모범 답변</h2>
+  ${s.custom ? (s.a[0] ? '' : `<div class="card empty"><p>아직 모범 답변을 쓰지 않았어요.</p><p class="muted small">상황 수정에서 직접 쓰거나, 롤플레이로 저장한 답변을 ‘내 모범 답변’으로 지정해 보세요.</p><a class="btn sm" href="#note/custom/${s.id}">상황 수정하기</a></div>`)
+    : `<div class="lvtabs">${Object.keys(LEVELS).map(l=>`<button data-studylv="${l}" class="${l===lv?'on':''}">${lvLabel(l)}</button>`).join('')}</div>`}
+  <div class="card ${s.custom && !s.a[0] ? 'hidden' : ''}">
+    <div class="row between" style="margin-bottom:8px">
+      <div class="row">
+        <button class="btn sm primary" data-act="playall">▶ 전체 듣기</button>
+        <button class="btn sm" data-act="shadow">따라 말하기 모드</button>
+        <button class="btn sm" data-act="stop">■ 정지</button>
+      </div>
+      <div class="row">
+        <label class="small muted">목소리 <select data-act="voice" style="max-width:170px">${voiceOptions()}</select></label>
+        <label class="small muted">속도
+          <select data-act="rate">${[0.7,0.85,1,1.15].map(r=>`<option value="${r}" ${S.rate==r?'selected':''}>${r}x</option>`).join('')}</select>
+        </label>
+      </div>
+    </div>
+    ${sents.map((t,i)=>`<div class="sent"><button class="play" data-sent="${i}" aria-label="문장 듣기">${PLAY_ICON}</button><p>${tplHTML(t,s.exp)}</p></div>`).join('')}
+    <p class="muted small" style="margin:10px 0 0">노란색은 핵심 표현, <span class="mine">밑줄</span>은 내 회사 정보가 들어간 부분이에요. 따라 말하기 모드는 문장마다 멈춰서 따라 말할 시간을 줘요.</p>
+  </div>
+  <div class="tip" style="margin-top:12px"><b>${s.custom?'나만의 상황':lv+'단계 포인트'}</b> · ${esc(s.t[idx])}</div>
+
+  ${myAnswersBlock(s)}
+
+  <div class="row" style="margin-top:20px">
+    <a class="btn primary" href="#roleplay/${s.id}">이 상황 말해보기 →</a>
+    ${s.custom?`<a class="btn" href="#note/custom/${s.id}">상황 수정</a>`:''}
+    <button class="btn" data-act="markdone">${isDone(s.id)?'✓ 학습 완료됨':'학습 완료로 표시'}</button>
+    <button class="btn ${S.retry[s.id]?'on':''}" data-act="toggleRetry">${S.retry[s.id]?'다시 연습 표시됨':'다시 연습할래요'}</button>
+  </div>`;
+}
+
+/* ---------- 롤플레이 ---------- */
+const rp = { id:null, prep:null };
+const rec = { mr:null, stream:null, chunks:[], t:null, start:0, sr:null, text:'', on:false };
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function roleplayView(){
+  const s = byId(rp.id), lv = LEVELS[S.level], idx = Number(S.level)-1;
+  const best = answersOf(s.id).find(a=>a.best);
+  const modelText = s.a[idx] || (best ? best.text : '');
+  const canRec = !!(navigator.mediaDevices && window.MediaRecorder);
+  return `
+  <h1>롤플레이</h1>
+  <p class="muted">질문을 듣고 <b>${lvLabel(S.level)}</b> 목표(약 ${lv.target}초)에 맞춰 답해 보세요.</p>
+  <div class="row" style="margin:12px 0">
+    <select data-act="pick">${STAGES.map(([k,n])=>`<optgroup label="${n}">${SCENARIOS.filter(x=>x.stage===k).map(x=>
+      `<option value="${x.id}" ${x.id===rp.id?'selected':''}>${'★'.repeat(imp(x))} ${esc(x.title)}${isDone(x.id)?' ✓':''}</option>`).join('')}</optgroup>`).join('')}</select>
+    <button class="btn sm" data-act="nextrp">추천 다음 상황 →</button>
+  </div>
+  <div class="card">
+    <div class="row between" style="margin-bottom:6px">
+      <div class="row"><span class="tag">${stageName(s.stage)}</span>${starsHTML(s,false)}</div>
+      ${S.retry[s.id]?'<span class="pill warn">다시 연습</span>':''}
+    </div>
+    <p class="muted small" style="margin-bottom:6px">${esc(s.sit)}</p>
+    <div class="prompt row" style="flex-wrap:nowrap;align-items:flex-start">
+      <button class="play" data-say="${esc(fill(s.q))}" aria-label="질문 듣기">${PLAY_ICON}</button>
+      <div>${esc(fill(s.q))}</div>
+    </div>
+    <div class="row between" style="margin-top:16px">
+      <div class="timer" id="timer">0:00</div>
+      <div class="row">
+        <button class="btn" id="prepBtn" data-act="prep" ${canRec?'':'disabled'}>준비 20초 후 녹음</button>
+        <button class="btn primary" id="recBtn" data-act="rec" ${canRec?'':'disabled'}>● 녹음 시작</button>
+      </div>
+    </div>
+    <div class="bar" id="bar" style="margin-top:10px"><i></i></div>
+    <p class="muted small" id="barNote" style="margin:6px 0 0">목표 ${lv.target}초</p>
+    ${canRec?'':'<p class="note" style="margin-top:10px">이 브라우저에서는 녹음을 지원하지 않아요. Chrome이나 Safari 최신 버전을 사용해 주세요.</p>'}
+  </div>
+
+  <div id="result" class="hidden">
+    <h2>내 답변</h2>
+    <div class="card">
+      <audio id="player" controls style="width:100%"></audio>
+      ${SR ? `<p class="muted small" style="margin:12px 0 6px">자동 받아쓰기 (참고용)</p><div class="transcript" id="transcript"></div>` : '<p class="note" style="margin-top:10px">자동 받아쓰기는 Chrome에서만 지원돼요. 녹음을 다시 들으며 직접 확인해 보세요.</p>'}
+      <p class="muted small" style="margin:14px 0 6px">핵심 표현 사용 여부${SR?'':' (직접 체크)'}</p>
+      <div id="expCheck" class="checks"></div>
+    </div>
+    <h2>내 답변 저장하고 문법 검사</h2>
+    <div class="card">
+      <p class="muted small" style="margin-bottom:6px">${SR?'받아쓰기가 틀린 부분이 있으면 고친 뒤':'녹음을 들으며 내가 한 말을 영어로 적은 뒤'} 저장하세요. 녹음과 함께 내 노트에 보관되고, 문법 검사로 틀린 부분을 확인할 수 있어요.</p>
+      <textarea id="ansText" rows="4" placeholder="내가 말한 답변을 영어로 적어 주세요."></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn primary" data-act="saveAnswer">녹음과 함께 저장</button><span id="saveMsg" class="muted small"></span></div>
+      <div id="rpCheckWrap"></div>
+    </div>
+    <h2>스스로 점검 (${S.level}단계)</h2>
+    <div class="card checks">${SELF_CHECK[S.level].map(c=>`<label><input type="checkbox"> ${c}</label>`).join('')}</div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" data-act="reveal">모범 답변 보기</button>
+      <button class="btn" data-act="retry">다시 녹음</button>
+      <button class="btn ${S.retry[s.id]?'on':''}" data-act="toggleRetry">${S.retry[s.id]?'다시 연습 표시됨':'다시 연습할래요'}</button>
+      <button class="btn primary" data-act="rpdone">${isDone(s.id)&&!S.retry[s.id]?'✓ 완료됨':'이 상황 완료'}</button>
+    </div>
+    <div id="model" class="hidden" style="margin-top:12px">
+      ${modelText ? `<div class="card">
+        <div class="row between" style="margin-bottom:8px"><span class="pill">${s.custom?'내 모범 답변':lvLabel(S.level)+' 모범 답변'}</span><button class="btn sm" data-say="${esc(fill(modelText))}">▶ 듣기</button></div>
+        <p style="margin:0;font-size:17px">${tplHTML(modelText, s.exp)}</p>
+      </div>` : `<p class="note">아직 이 상황의 모범 답변이 없어요. 저장한 답변을 내 노트에서 ‘내 모범 답변’으로 지정할 수 있어요.</p>`}
+      <div class="tip" style="margin-top:10px"><b>${s.custom?'나만의 상황':S.level+'단계 포인트'}</b> · ${esc(s.t[idx])}</div>
+    </div>
+  </div>`;
+}
+
+function fmt(sec){ return Math.floor(sec/60)+':'+String(Math.floor(sec%60)).padStart(2,'0'); }
+function setTimerUI(sec){
+  const t=$('#timer'); if(!t) return;
+  t.textContent = fmt(sec);
+  const target = LEVELS[S.level].target, bar=$('#bar');
+  bar.querySelector('i').style.width = Math.min(100, sec/target*100)+'%';
+  bar.classList.toggle('over', sec>=target);
+  $('#barNote').textContent = sec>=target ? `목표 ${target}초 달성! 자연스럽게 마무리하세요.` : `목표 ${target}초`;
+}
+function startPrep(){
+  stopSpeak();
+  let left = 20;
+  $('#prepBtn').disabled = true;
+  $('#timer').textContent = '준비 ' + left;
+  rp.prep = setInterval(()=>{
+    left--;
+    if(left<=0){ clearInterval(rp.prep); rp.prep=null; startRec(); }
+    else $('#timer').textContent = '준비 ' + left;
+  },1000);
+}
+async function startRec(){
+  stopSpeak();
+  if(rp.prep){ clearInterval(rp.prep); rp.prep=null; }
+  try{ rec.stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ alert('마이크 권한이 필요해요. 브라우저 주소창 옆에서 마이크를 허용해 주세요.'); $('#prepBtn').disabled=false; return; }
+  rec.chunks=[]; rec.text=''; rec.on=true;
+  rec.mr = new MediaRecorder(rec.stream);
+  rec.mr.ondataavailable = e=>{ if(e.data.size) rec.chunks.push(e.data); };
+  rec.mr.onstop = showResult;
+  rec.mr.start();
+  rec.start = Date.now();
+  rec.t = setInterval(()=>setTimerUI((Date.now()-rec.start)/1000), 250);
+  const b=$('#recBtn'); b.textContent='■ 녹음 끝내기'; b.className='btn rec'; b.dataset.act='stoprec';
+  $('#prepBtn').disabled = true;
+  $('#result').classList.add('hidden');
+  if(SR){
+    try{
+      const r = new SR(); r.lang='en-US'; r.continuous=true; r.interimResults=true;
+      let finals='';
+      r.onresult = e=>{
+        let interim='';
+        for(let i=e.resultIndex;i<e.results.length;i++){
+          if(e.results[i].isFinal) finals += e.results[i][0].transcript+' ';
+          else interim += e.results[i][0].transcript;
+        }
+        rec.text = finals + interim;
+      };
+      r.onerror = ()=>{};
+      r.onend = ()=>{ if(rec.on){ try{ r.start(); }catch(e){} } };
+      r.start(); rec.sr = r;
+    }catch(e){ rec.sr=null; }
+  }
+  touchDay('rec');
+}
+function stopRec(silent){
+  if(rp.prep){ clearInterval(rp.prep); rp.prep=null; }
+  if(!rec.on) return;
+  rec.on=false;
+  rec.dur = (Date.now()-rec.start)/1000;
+  clearInterval(rec.t);
+  if(rec.sr){ try{ rec.sr.stop(); }catch(e){} rec.sr=null; }
+  if(silent && rec.mr) rec.mr.onstop = null;
+  if(rec.mr && rec.mr.state!=='inactive') rec.mr.stop();
+  if(rec.stream) rec.stream.getTracks().forEach(t=>t.stop());
+}
+function showResult(){
+  const s = byId(rp.id);
+  const blob = new Blob(rec.chunks, {type: rec.mr.mimeType || 'audio/webm'});
+  rec.blob = blob;   // '녹음과 함께 저장'에서 사용
+  $('#player').src = URL.createObjectURL(blob);
+  $('#saveMsg').textContent = ''; $('#rpCheckWrap').innerHTML = '';
+  const sb = document.querySelector('[data-act="saveAnswer"]'); if(sb) sb.disabled = false;
+  const b=$('#recBtn'); b.textContent='● 녹음 시작'; b.className='btn primary'; b.dataset.act='rec';
+  $('#prepBtn').disabled=false;
+  // 받아쓰기 결과가 조금 늦게 도착할 수 있어 잠시 뒤 반영
+  setTimeout(()=>{
+    const text = rec.text.trim(), low = text.toLowerCase();
+    if(SR) $('#transcript').innerHTML = text ? highlight(text, s.exp) : '<span class="muted">인식된 문장이 없어요. 마이크와 가까이서 또박또박 말해 보세요.</span>';
+    $('#ansText').value = text;
+    $('#expCheck').innerHTML = s.exp.map(e=>{
+      const hit = SR && low.includes(e[2].toLowerCase());
+      return SR
+        ? `<div class="${hit?'hit':'miss'}">${hit?'✓':'○'} ${esc(e[0])} <span class="muted small">${esc(e[1])}</span></div>`
+        : `<label><input type="checkbox"> ${esc(e[0])} <span class="muted small">${esc(e[1])}</span></label>`;
+    }).join('');
+    $('#result').classList.remove('hidden');
+    $('#result').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 600);
+}
+
+/* ---------- 표현 카드 ---------- */
+const deck = { filter:'all', i:0, flipped:false, order:null };
+function allCards(){ return SCENARIOS.flatMap(s=>s.exp.map((e,i)=>({en:e[0], ko:e[1], key:s.id+'-'+i, s}))); }
+function deckCards(){
+  const f = deck.filter;
+  let c = allCards();
+  if(f==='mine') c = (S.myExp||[]).map(x=>({en:x.en, ko:x.ko||'', key:'m:'+x.id, s:{title:'내 표현장'}}));
+  else if(f==='again') c = c.filter(x=>S.cards[x.key]!=='known');
+  else if(f==='imp3') c = c.filter(x=>imp(x.s)===3);
+  else if(f==='fav') c = c.filter(x=>S.fav[x.s.id]);
+  else if(f.startsWith('stage:')) c = c.filter(x=>x.s.stage===f.slice(6));
+  else if(f!=='all') c = c.filter(x=>x.s.id===f);
+  if(deck.order) c.sort((a,b)=>(deck.order[a.key]||0)-(deck.order[b.key]||0));
+  return c;
+}
+function cardsView(){
+  const list = deckCards();
+  if(deck.i >= list.length) deck.i = 0;
+  const c = list[deck.i];
+  const known = list.filter(x=>S.cards[x.key]==='known').length;
+  const opt = (v,l) => `<option value="${v}" ${deck.filter===v?'selected':''}>${l}</option>`;
+  return `
+  <h1>표현 카드</h1>
+  <p class="muted">한국어를 보고 영어로 먼저 소리 내 말한 뒤, 카드를 눌러 확인하세요.</p>
+  <div class="row between" style="margin:14px 0">
+    <select data-act="filter">
+      <optgroup label="모아 보기">${opt('mine','내 표현장')}${opt('all','전체 표현')}${opt('again','아직 못 외운 표현')}${opt('imp3','★★★ 필수 상황 표현')}${opt('fav','♥ 즐겨찾기 상황 표현')}</optgroup>
+      <optgroup label="거래 단계">${STAGES.map(([k,n])=>opt('stage:'+k, n)).join('')}</optgroup>
+      <optgroup label="상황별">${SCENARIOS.map(s=>opt(s.id, s.title)).join('')}</optgroup>
+    </select>
+    <div class="row"><span class="muted small">외움 ${known} / ${list.length}</span><button class="btn sm" data-act="shuffle">섞기</button></div>
+  </div>
+  ${c ? `
+  <div class="card flash" data-act="flip">
+    <span class="pill">${esc(c.s.title)}</span>
+    <div>${esc(c.ko)}</div>
+    ${deck.flipped
+      ? `<div class="en">${esc(c.en)}</div><button class="btn sm" data-say="${esc(c.en.replace(/~/g,''))}">▶ 발음 듣기</button>`
+      : `<div class="muted small">눌러서 영어 확인</div>`}
+  </div>
+  <div class="row between" style="margin-top:12px">
+    <span class="muted small">${deck.i+1} / ${list.length}${S.cards[c.key]==='known'?' · ✓ 외움':''}</span>
+    <div class="row">
+      <button class="btn" data-act="again">다시 볼래요</button>
+      <button class="btn primary" data-act="known">외웠어요</button>
+    </div>
+  </div>` : `<div class="card empty"><p style="margin:0">이 목록에 표현이 없어요. 다른 목록을 선택해 보세요.</p></div>`}`;
+}
+function rateCard(v){
+  const list = deckCards(), c = list[deck.i]; if(!c) return;
+  S.cards[c.key] = v; touchDay('card');
+  deck.flipped = false;
+  if(!(deck.filter==='again' && v==='known')) deck.i++;
+  if(deck.i >= deckCards().length) deck.i = 0;
+  $('#main').innerHTML = cardsView();
+}
+
+/* ---------- 이벤트 ---------- */
+function readProfileForm(){
+  const p = {};
+  document.querySelectorAll('[data-pf]').forEach(i=>{ p[i.dataset.pf] = i.value.trim(); });
+  return p;
+}
+document.addEventListener('click', e=>{
+  const t = e.target;
+  const star = t.closest('[data-star]');
+  if(star){
+    const s = byId(star.dataset.star), n = +star.dataset.n;
+    if(n===s.imp) delete S.imp[s.id]; else S.imp[s.id] = n;
+    save(); refresh(); return;
+  }
+  const fav = t.closest('[data-fav]');
+  if(fav){ const id=fav.dataset.fav; if(S.fav[id]) delete S.fav[id]; else S.fav[id]=true; save(); refresh(); return; }
+  const lvEl = t.closest('[data-level]');
+  if(lvEl){ setLevel(lvEl.dataset.level); return; }
+  if(t.closest('a[href]')) return;
+  const open = t.closest('[data-open]');
+  if(open){ location.hash = '#study/'+open.dataset.open; return; }
+  const go = t.closest('[data-go]');
+  if(go){ location.hash = go.dataset.go; return; }
+  const say = t.closest('[data-say]');
+  if(say){ e.stopPropagation(); stopSpeak(); speak(say.dataset.say); return; }
+  const flt = t.closest('[data-filter]');
+  if(flt){
+    const g = flt.dataset.filter, v = flt.dataset.val;
+    S.f[g] = g==='fav' ? v==='true' : (g==='imp' ? +v : v);
+    save(); refresh(); return;
+  }
+  const pre = t.closest('[data-preset]');
+  if(pre){
+    const x = PRESETS[+pre.dataset.preset];
+    ['products','item','feature'].forEach(k=>{ const i=document.querySelector(`[data-pf="${k}"]`); if(i) i.value = x[k]; });
+    return;
+  }
+  const sent = t.closest('[data-sent]');
+  if(sent){
+    const s = byId(view.study), list = splitSent(s.a[Number(view.studyLv)-1]).map(fill), i = +sent.dataset.sent;
+    stopSpeak();
+    document.querySelectorAll('.sent')[i].classList.add('now');
+    speak(list[i], ()=>document.querySelectorAll('.sent').forEach(x=>x.classList.remove('now')));
+    return;
+  }
+  const sl = t.closest('[data-studylv]');
+  if(sl){ stopSpeak(); view.studyLv = sl.dataset.studylv; $('#main').innerHTML = studyDetail(); return; }
+
+  const a = t.closest('[data-act]'); if(!a || a.tagName==='SELECT') return;
+  const act = a.dataset.act;
+  if(act==='playall' || act==='shadow'){ const s=byId(view.study); playSentences(splitSent(s.a[Number(view.studyLv)-1]).map(fill), act==='shadow'); }
+  if(act==='stop') stopSpeak();
+  if(act==='voiceTest'){ stopSpeak(); speak(SAMPLE_LINE); }
+  if(act==='markdone'){ markDone(view.study); refresh(); }
+  if(act==='toggleRetry'){
+    const id = view.tab==='roleplay' ? rp.id : view.study;
+    if(S.retry[id]) delete S.retry[id]; else S.retry[id] = true;
+    save();
+    if(view.tab==='roleplay'){ a.classList.toggle('on', !!S.retry[id]); a.textContent = S.retry[id]?'다시 연습 표시됨':'다시 연습할래요'; }
+    else refresh();
+  }
+  if(act==='resetFilter'){ S.f = defState().f; save(); refresh(); }
+  if(act==='editProfile'){ view.editProfile = true; refresh(); }
+  if(act==='cancelProfile'){ view.editProfile = false; refresh(); }
+  if(act==='skipProfile'){ S.profile = {}; view.editProfile = false; save(); refresh(); }
+  if(act==='saveProfile'){ S.profile = readProfileForm(); view.editProfile = false; save(); refresh(); }
+  if(act==='prep') startPrep();
+  if(act==='rec') startRec();
+  if(act==='stoprec') stopRec();
+  if(act==='retry'){ $('#result').classList.add('hidden'); setTimerUI(0); startRec(); }
+  if(act==='reveal'){ $('#model').classList.toggle('hidden'); }
+  if(act==='rpdone'){ markDone(rp.id); a.textContent='✓ 완료됨'; const r=document.querySelector('[data-act="toggleRetry"]'); if(r){ r.classList.remove('on'); r.textContent='다시 연습할래요'; } }
+  if(act==='nextrp'){ location.hash = '#roleplay/'+nextScenario(rp.id).id; }
+  if(act==='flip'){ deck.flipped = !deck.flipped; $('#main').innerHTML = cardsView(); }
+  if(act==='known') rateCard('known');
+  if(act==='again') rateCard('again');
+  if(act==='shuffle'){ deck.order = {}; allCards().forEach(c=>deck.order[c.key]=Math.random()); deck.i=0; deck.flipped=false; $('#main').innerHTML = cardsView(); }
+});
+document.addEventListener('change', e=>{
+  const act = e.target.dataset.act;
+  if(act==='rate'){ S.rate = +e.target.value; save(); }
+  if(act==='voice'){
+    S.voice = e.target.value; save(); pickVoice();
+    document.querySelectorAll('select[data-act="voice"]').forEach(sel=>{ sel.value = S.voice; });
+    stopSpeak(); speak(SAMPLE_LINE);
+  }
+  if(act==='pick'){ location.hash = '#roleplay/'+e.target.value; }
+  if(act==='stage'){ S.f.stage = e.target.value; save(); refresh(); }
+  if(act==='filter'){ deck.filter = e.target.value; deck.i=0; deck.flipped=false; $('#main').innerHTML = cardsView(); }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.matches('[data-pf]')){ document.querySelector('[data-act="saveProfile"]').click(); }
+});
+window.addEventListener('hashchange', route);
+
+// 시작: 저장된 답변(녹음)을 불러온 뒤 첫 화면 그리기
+(async ()=>{
+  rebuildScenarios();
+  renderLevelSeg();
+  await loadAnswers();
+  route();
+})();
+</script>
+</body>
+</html>
